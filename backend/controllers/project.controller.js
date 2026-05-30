@@ -85,3 +85,13 @@ export const searchProjects = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getProjectsByOwner = async (req, res) => {
+  try {
+    const owner = req.user.id;
+    const projects = await Project.find({ owner });
+    res.status(200).json(projects);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

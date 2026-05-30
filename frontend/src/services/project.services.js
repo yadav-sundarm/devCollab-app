@@ -61,3 +61,13 @@ export const deleteProject = async (projectId) => {
     throw error;
   }
 };
+
+export const getProjectsByOwner = async () => {
+  try {
+    const response = await api.get("/myProjects");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching your project:", error);
+    throw error;
+  }
+};
