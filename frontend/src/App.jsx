@@ -6,6 +6,7 @@ import Project from './pages/Project.jsx';
 import CreateProject from './pages/CreateProject.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import ProjectApplications from './pages/ProjectApplications.jsx';
+import UserProfilePage from './pages/UserProfilePage.jsx';
 import ProtectedRoutes from './components/protectedRoutes.jsx';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<Homepage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/user/:userId" element={<ProtectedRoutes><UserProfilePage /></ProtectedRoutes>} />
         <Route path="/projects/createProject" element={<ProtectedRoutes><CreateProject /></ProtectedRoutes>} />
         <Route path="/dashboard" element={<ProtectedRoutes><Dashboard /></ProtectedRoutes>} />
         <Route path="/myProjects/:projectId" element={<ProtectedRoutes><ProjectApplications /></ProtectedRoutes>} />
