@@ -7,6 +7,7 @@ import projectRoutes from "./routes/project.routes.js";
 import applicationRoutes from "./routes/application.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import githubRoutes from "./routes/github.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 const app = express();
@@ -29,4 +30,6 @@ app.use("/api/projects", projectRoutes);
 app.use("/api", applicationRoutes);
 app.use("/api", messageRoutes);
 app.use("/api/github", githubRoutes);
+app.use("/api/users", userRoutes);
+
 startserver();
