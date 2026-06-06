@@ -48,3 +48,13 @@ export const updateApplicationStatus = async (
     throw error;
   }
 };
+
+export const getMyApplications = async () => {
+  try {
+    const response = await api.get("/myApplications");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching applications:", error);
+    throw error;
+  }
+};

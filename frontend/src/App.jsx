@@ -9,6 +9,7 @@ import ProjectApplications from './pages/ProjectApplications.jsx'
 import UserProfile from './pages/UserProfilePage.jsx'
 import Layout from './components/layout.jsx'
 import ProtectedRoutes from './components/protectedRoutes.jsx'
+import MyApplications from './pages/MyApplications.jsx'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 function App() {
@@ -26,6 +27,11 @@ function App() {
         <Route path="/dashboard" element={
           <ProtectedRoutes>
             <Layout><Dashboard /></Layout>
+          </ProtectedRoutes>
+        } />
+        <Route path="/applications" element={
+          <ProtectedRoutes>
+            <Layout><MyApplications /></Layout>
           </ProtectedRoutes>
         } />
         <Route path="/myProjects/:projectId" element={

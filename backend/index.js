@@ -20,7 +20,6 @@ const startserver = async () => {
     await connectDB();
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
-      console.log("GitHub token:", process.env.GITHUB_API);
     });
   } catch (error) {
     console.error("Error connecting to database:", error);
