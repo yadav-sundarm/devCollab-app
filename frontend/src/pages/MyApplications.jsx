@@ -5,6 +5,7 @@ import { getMyApplications } from "../services/application.services";
 const MyApplications = () => {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -13,7 +14,7 @@ const MyApplications = () => {
                 const data = await getMyApplications();
                 setApplications(data);
             } catch (error) {
-                console.error("Error fetching applications:", error);
+                setError("Failed to load applications. Please try again.", error.message);
             } finally {
                 setLoading(false);
             }
@@ -21,31 +22,27 @@ const MyApplications = () => {
         fetchApplications();
     }, []);
 
-    if (loading) return <p>Loading applications...</p>
+    if (loading) return <p>Loading applications...</p>;
+    if (error) return <p>{error} <button onClick={() => window.location.reload()}>Retry</button></p>;
 
     return (
         <div>
             <h1>My Applications</h1>
             {applications.length === 0 ? (
-                <p>You haven't applied to any projects yet. <button onClick={() => navigate('/')}>Browse Projects</button></p>
+                <p>You haven't applied to any projects yet.{" "}
+                    <button onClick={() => navigate("/")}>Browse Projects</button>
+                </p>
             ) : (
                 applications.map(application => (
                     <div key={application._id}>
-                        {/* Project Info */}
                         <h2>{application.projectId?.title}</h2>
                         <p>Domain: {application.projectId?.domain}</p>
                         <p>Project Status: {application.projectId?.status}</p>
-
-                        {/* Application Info */}
                         <p>Message: {application.message}</p>
                         <p>Applied: {new Date(application.createdAt).toLocaleDateString()}</p>
-
-                        {/* Application Status */}
                         <p>Status: {application.status}</p>
-
-                        {/* Actions based on status */}
                         {application.status === "Accepted" && (
-                            <button onClick={() => navigate(`/messages/${application.projectId?._id}`)}>
+                            <button onClick={() => navigate(`/chat/${application.projectId?._id}`)}>
                                 Chat Now
                             </button>
                         )}
@@ -56,7 +53,7 @@ const MyApplications = () => {
                 ))
             )}
         </div>
-    )
-}
+    );
+};
 
 export default MyApplications;

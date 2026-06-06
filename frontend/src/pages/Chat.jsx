@@ -3,20 +3,18 @@ import { useParams } from "react-router-dom"
 import { io } from "socket.io-client"
 import { getMessagesByProject } from "../services/message.services.js"
 
-const socket = io("http://localhost:5000")
-
 const Chat = () => {
     const { projectId } = useParams()
     const user = JSON.parse(localStorage.getItem("user"))
     const [messages, setMessages] = useState([])
     const [input, setInput] = useState("")
     const messagesEndRef = useRef(null)
+    const socketRef = useRef(null)        // ← inside the component
 
     useEffect(() => {
-        // Join the room
-        socket.emit("joinRoom", projectId)
+        socketRef.current = io(import.meta.env.VITE_API_URL)
+        socketRef.current.emit("joinRoom", projectId)
 
-        // Load previous messages
         const loadMessages = async () => {
             try {
                 const data = await getMessagesByProject(projectId)
@@ -27,27 +25,25 @@ const Chat = () => {
         }
         loadMessages()
 
-        // Listen for new messages
-        socket.on("receiveMessage", (message) => {
+        socketRef.current.on("receiveMessage", (message) => {
             setMessages((prev) => [...prev, message])
         })
 
         return () => {
-            socket.off("receiveMessage")
+            socketRef.current.off("receiveMessage")
+            socketRef.current.disconnect()  // ← also disconnect on cleanup
         }
     }, [projectId])
 
-    // Auto scroll to bottom
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
     }, [messages])
 
     const sendMessage = () => {
         if (!input.trim()) return
-        socket.emit("sendMessage", {
+        socketRef.current.emit("sendMessage", {
             projectId,
             senderId: user._id,
-            receiverId: "", // will handle later
             content: input
         })
         setInput("")

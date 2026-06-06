@@ -8,7 +8,7 @@ import authMiddleware from "../middlewares/auth.middleware.js";
 import express from "express";
 
 const router = express.Router();
-router.get("/myApplications", authMiddleware, getMyApplications);
+router.get("/projects/myApplications", authMiddleware, getMyApplications);
 router.post("/projects/:projectId/apply", authMiddleware, createApplication);
 router.get(
   "/projects/:projectId/applications",

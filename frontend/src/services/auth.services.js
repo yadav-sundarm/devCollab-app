@@ -1,13 +1,12 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api/auth",
+  baseURL: `${import.meta.env.VITE_API_URL}/api/auth`,
 });
 
 export const signupService = async (userData) => {
   try {
     const response = await api.post("/signup", userData);
-    localStorage.setItem("token", response.data.token);
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("user", JSON.stringify(response.data.user));
     return response.data;
@@ -20,7 +19,6 @@ export const signupService = async (userData) => {
 export const loginService = async (userData) => {
   try {
     const response = await api.post("/login", userData);
-    localStorage.setItem("token", response.data.token);
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("user", JSON.stringify(response.data.user));
     return response.data;

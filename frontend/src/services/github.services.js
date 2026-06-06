@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api/github",
+  baseURL: `${import.meta.env.VITE_API_URL}/api/github`,
 });
 
 api.interceptors.request.use((config) => {
