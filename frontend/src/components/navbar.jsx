@@ -23,7 +23,7 @@ const Navbar = () => {
                 onKeyDown={handleSearch}
             />
             <div>
-                <button onClick={() => navigate('/messages')}>Chat</button>
+                <button onClick={() => navigate('/messages')}>Chats</button>
                 <img
                     src={user?.avatar || '/default-avatar.png'}
                     onClick={() => navigate(`/profile/${user?._id}`)}

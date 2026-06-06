@@ -10,6 +10,8 @@ import UserProfile from './pages/UserProfilePage.jsx'
 import Layout from './components/layout.jsx'
 import ProtectedRoutes from './components/protectedRoutes.jsx'
 import MyApplications from './pages/MyApplications.jsx'
+import Chat from './pages/Chat.jsx'
+import MyChats from './pages/MyChats.jsx'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 function App() {
@@ -47,6 +49,16 @@ function App() {
         <Route path="/profile/:userId" element={
           <ProtectedRoutes>
             <Layout><UserProfile /></Layout>
+          </ProtectedRoutes>
+        } />
+        <Route path="/chat/:projectId" element={
+          <ProtectedRoutes>
+            <Layout><Chat /></Layout>
+          </ProtectedRoutes>
+        } />
+        <Route path="/messages" element={
+          <ProtectedRoutes>
+            <Layout><MyChats /></Layout>
           </ProtectedRoutes>
         } />
       </Routes>
