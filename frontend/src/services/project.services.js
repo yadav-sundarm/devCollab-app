@@ -71,3 +71,13 @@ export const getProjectsByOwner = async () => {
     throw error;
   }
 };
+
+export const searchProjects = async (query) => {
+  try {
+    const response = await api.get(`/search?query=${query}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error searching projects:", error);
+    throw error;
+  }
+};

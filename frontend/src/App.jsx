@@ -1,30 +1,51 @@
-import Homepage from './pages/Homepage.jsx';
-import './App.css';
-import Signup from './pages/Signup.jsx';
-import Login from './pages/Login.jsx';
-import Project from './pages/Project.jsx';
-import CreateProject from './pages/CreateProject.jsx';
-import Dashboard from './pages/Dashboard.jsx';
-import ProjectApplications from './pages/ProjectApplications.jsx';
-import UserProfilePage from './pages/UserProfilePage.jsx';
-import ProtectedRoutes from './components/protectedRoutes.jsx';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Homepage from './pages/Homepage.jsx'
+import './App.css'
+import Signup from './pages/Signup.jsx'
+import Login from './pages/Login.jsx'
+import Project from './pages/Project.jsx'
+import CreateProject from './pages/CreateProject.jsx'
+import Dashboard from './pages/Dashboard.jsx'
+import ProjectApplications from './pages/ProjectApplications.jsx'
+import UserProfile from './pages/UserProfile.jsx'
+import Layout from './components/Layout.jsx'
+import ProtectedRoutes from './components/protectedRoutes.jsx'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Homepage />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/user/:userId" element={<ProtectedRoutes><UserProfilePage /></ProtectedRoutes>} />
-        <Route path="/projects/createProject" element={<ProtectedRoutes><CreateProject /></ProtectedRoutes>} />
-        <Route path="/dashboard" element={<ProtectedRoutes><Dashboard /></ProtectedRoutes>} />
-        <Route path="/myProjects/:projectId" element={<ProtectedRoutes><ProjectApplications /></ProtectedRoutes>} />
-        <Route path="/projects/:projectId" element={<ProtectedRoutes><Project /></ProtectedRoutes>} />
+        <Route path="/" element={<Layout><Homepage /></Layout>} />
+        <Route path="/projects/createProject" element={
+          <ProtectedRoutes>
+            <Layout><CreateProject /></Layout>
+          </ProtectedRoutes>
+        } />
+        <Route path="/dashboard" element={
+          <ProtectedRoutes>
+            <Layout><Dashboard /></Layout>
+          </ProtectedRoutes>
+        } />
+        <Route path="/myProjects/:projectId" element={
+          <ProtectedRoutes>
+            <Layout><ProjectApplications /></Layout>
+          </ProtectedRoutes>
+        } />
+        <Route path="/projects/:projectId" element={
+          <ProtectedRoutes>
+            <Layout><Project /></Layout>
+          </ProtectedRoutes>
+        } />
+        <Route path="/profile/:userId" element={
+          <ProtectedRoutes>
+            <Layout><UserProfile /></Layout>
+          </ProtectedRoutes>
+        } />
       </Routes>
     </Router>
   )
 }
 
-export default App;
+export default App
