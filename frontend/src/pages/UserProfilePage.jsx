@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { fetchGithubData } from "../services/github.services.js";
-import { fetchUserById } from "../services/user.services";
+import { fetchUserById } from "../services/user.services.js";
 
 const UserProfile = () => {
     const { userId } = useParams();

@@ -1,15 +1,15 @@
 import connectDB from "./db/db.js";
 import cors from "cors";
 import express from "express";
-import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes.js";
 import projectRoutes from "./routes/project.routes.js";
 import applicationRoutes from "./routes/application.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import githubRoutes from "./routes/github.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config(); // must be at the very top
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -20,6 +20,7 @@ const startserver = async () => {
     await connectDB();
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
+      console.log("GitHub token:", process.env.GITHUB_API);
     });
   } catch (error) {
     console.error("Error connecting to database:", error);

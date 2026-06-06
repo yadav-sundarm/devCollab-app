@@ -1,15 +1,15 @@
 import axios from "axios";
+
 const githubApi = axios.create({
   baseURL: "https://api.github.com",
-  headers: {
-    Authorization: `Bearer ${process.env.GITHUB_API}`,
-  },
 });
-// 1. Get user profile stats
+
 export const getUserProfile = async (githubUrl) => {
   try {
-    const username = githubUrl.split("/")[3];
-    const response = await githubApi.get(`/users/${username}`);
+    const username = githubUrl.replace(/\/$/, "").split("/").pop();
+    const response = await githubApi.get(`/users/${username}`, {
+      headers: { Authorization: `Bearer ${process.env.GITHUB_API}` },
+    });
     return {
       avatar: response.data.avatar_url,
       bio: response.data.bio,
@@ -19,16 +19,18 @@ export const getUserProfile = async (githubUrl) => {
       createdAt: response.data.created_at,
     };
   } catch (error) {
-    console.log("Error fetvhing user profile : ", error);
+    console.log("Error fetching user profile : ", error);
     throw error;
   }
 };
 
-// 2. Get repositories
 export const getRepos = async (username) => {
   try {
     const response = await githubApi.get(
       `/users/${username}/repos?per_page=50`,
+      {
+        headers: { Authorization: `Bearer ${process.env.GITHUB_API}` },
+      },
     );
     return response.data.map((repo) => ({
       name: repo.name,
@@ -42,7 +44,6 @@ export const getRepos = async (username) => {
   }
 };
 
-// 3. Get top languages
 export const getTopLanguages = async (username) => {
   try {
     const repos = await getRepos(username);
