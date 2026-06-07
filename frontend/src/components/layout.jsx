@@ -1,20 +1,26 @@
-import Navbar from './Navbar'
-import Sidebar from './Sidebar'
-import RightPanel from './RightPanel'
+import Navbar from './Navbar.jsx'
+import Sidebar from './Sidebar.jsx'
+import RightPanel from './RightPanel.jsx'
 
 const Layout = ({ children }) => {
     return (
-        <div>
+        <div className="min-h-screen bg-gray-100">
             <Navbar />
-            <div style={{ display: 'flex' }}>
-                <Sidebar />
-                <main style={{ flex: 1 }}>
-                    {children}
-                </main>
-                <RightPanel />
+            <div className="max-w-5xl mx-auto px-4 py-5">
+                <div className="flex gap-4 items-start">
+                    <aside className="w-56 shrink-0 sticky top-[72px]">
+                        <Sidebar />
+                    </aside>
+                    <main className="flex-1 min-w-0">
+                        {children}
+                    </main>
+                    <aside className="w-64 shrink-0 sticky top-[72px]">
+                        <RightPanel />
+                    </aside>
+                </div>
             </div>
         </div>
     )
 }
 
-export default Layout
+export default Layout;

@@ -7,8 +7,8 @@ import CreateProject from './pages/CreateProject.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import ProjectApplications from './pages/ProjectApplications.jsx'
 import UserProfile from './pages/UserProfilePage.jsx'
-import Layout from './components/layout.jsx'
-import ProtectedRoutes from './components/protectedRoutes.jsx'
+import Layout from './components/Layout.jsx'
+import ProtectedRoutes from './components/ProtectedRoutes.jsx'
 import MyApplications from './pages/MyApplications.jsx'
 import Chat from './pages/Chat.jsx'
 import MyChats from './pages/MyChats.jsx'
@@ -66,4 +66,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
