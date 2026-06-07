@@ -10,8 +10,19 @@ const RightPanel = () => {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
+                const user = JSON.parse(localStorage.getItem('user'))
                 const projects = await getProjects()
-                setSuggestedProjects(projects.slice(0, 5))
+
+                const relevant = projects.filter(project =>
+                    project.requiredSkills.some(skill =>
+                        user?.skills?.includes(skill)
+                    )
+                )
+                setSuggestedProjects(
+                    relevant.length > 0
+                        ? relevant.slice(0, 5)
+                        : projects.slice(0, 5)
+                )
             } catch (error) {
                 console.error(error)
             }
