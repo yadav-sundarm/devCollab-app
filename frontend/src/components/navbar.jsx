@@ -35,8 +35,6 @@ const Navbar = () => {
 
                 <div className="flex items-center gap-1 ml-auto">
                     {[
-                        { icon: <Home className="w-5 h-5" />, label: 'Home', path: '/' },
-                        { icon: <LayoutDashboard className="w-5 h-5" />, label: 'Dashboard', path: '/dashboard' },
                         { icon: <MessageSquare className="w-5 h-5" />, label: 'Messages', path: '/messages' },
                     ].map(item => (
                         <button

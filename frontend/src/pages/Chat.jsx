@@ -49,7 +49,7 @@ const Chat = () => {
     return (
         <div className="bg-white rounded-xl border border-gray-200 flex flex-col" style={{ height: 'calc(100vh - 90px)' }}>
             <div className="px-5 py-3 border-b border-gray-200 shrink-0">
-                <h2 className="font-semibold text-gray-900">Project Chat</h2>
+                <h2 className="font-semibold text-gray-900">{projectId?.title || 'Project Chat'}</h2>
             </div>
 
             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
