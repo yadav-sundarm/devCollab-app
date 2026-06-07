@@ -51,11 +51,10 @@ const Navbar = () => {
 
                     {/* Notifications */}
                     <button
+                        onClick={() => navigate('/applications')} // reasonable placeholder
                         className="relative p-2 text-gray-500 hover:text-violet-600 hover:bg-violet-50 rounded-lg transition"
-                        title="Notifications"
                     >
                         <Bell className="w-5 h-5" />
-                        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
                     </button>
 
                     {/* Login/Signup when logged out */}

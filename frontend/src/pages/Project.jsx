@@ -9,6 +9,7 @@ const Project = () => {
     const { projectId } = useParams()
     const [showApplyForm, setShowApplyForm] = useState(false)
     const [message, setMessage] = useState('')
+    const [applyError, setApplyError] = useState('')
     const [applying, setApplying] = useState(false)
     const [applied, setApplied] = useState(false)
 
@@ -31,7 +32,7 @@ const Project = () => {
             setApplied(true)
             setShowApplyForm(false)
         } catch (error) {
-            alert(error.response?.status === 400 ? 'You have already applied.' : 'Something went wrong.')
+            setApplyError(error.response?.status === 400 ? 'You have already applied.' : 'Something went wrong.')
         } finally {
             setApplying(false)
         }
@@ -69,7 +70,10 @@ const Project = () => {
                         </div>
                     ) : (
                         <button
-                            onClick={() => setShowApplyForm(!showApplyForm)}
+                            onClick={() => {
+                                setShowApplyForm(!showApplyForm)
+                                setApplyError('')
+                            }}
                             className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2 rounded-lg text-sm font-medium transition"
                         >
                             {showApplyForm ? 'Cancel' : 'Apply Now'}
@@ -88,11 +92,16 @@ const Project = () => {
                         rows={4}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
                     />
-                    <div className="mt-3 flex justify-end">
-                        <button onClick={handleApply} disabled={applying}
-                            className="bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-medium transition">
-                            {applying ? 'Submitting...' : 'Submit Application'}
-                        </button>
+                    <div className="mt-3 flex flex-col gap-2">
+                        {applyError && (
+                            <p className="text-red-500 text-xs text-right">{applyError}</p>
+                        )}
+                        <div className="flex justify-end">
+                            <button onClick={handleApply} disabled={applying}
+                                className="bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-sm font-medium transition">
+                                {applying ? 'Submitting...' : 'Submit Application'}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}

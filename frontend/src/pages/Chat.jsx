@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import { getMessagesByProject } from '../services/message.services.js';
+import { getProjectById } from '../services/project.services.js';
 import { Send } from 'lucide-react';
 
 const Chat = () => {
@@ -9,6 +10,7 @@ const Chat = () => {
     const user = JSON.parse(localStorage.getItem('user'))
     const [messages, setMessages] = useState([])
     const [input, setInput] = useState('')
+    const [projectTitle, setProjectTitle] = useState('Project Chat')
     const messagesEndRef = useRef(null)
     const socketRef = useRef(null)
 
@@ -16,15 +18,19 @@ const Chat = () => {
         socketRef.current = io(import.meta.env.VITE_API_URL)
         socketRef.current.emit('joinRoom', projectId)
 
-        const loadMessages = async () => {
+        const loadData = async () => {
             try {
-                const data = await getMessagesByProject(projectId)
-                setMessages(data)
+                const [messages, project] = await Promise.all([
+                    getMessagesByProject(projectId),
+                    getProjectById(projectId)
+                ])
+                setMessages(messages)
+                setProjectTitle(project.title || 'Project Chat')
             } catch (error) {
-                console.error('Error loading messages:', error)
+                console.error('Error loading chat:', error)
             }
         }
-        loadMessages()
+        loadData()
 
         socketRef.current.on('receiveMessage', (message) => {
             setMessages(prev => [...prev, message])
@@ -49,7 +55,7 @@ const Chat = () => {
     return (
         <div className="bg-white rounded-xl border border-gray-200 flex flex-col" style={{ height: 'calc(100vh - 90px)' }}>
             <div className="px-5 py-3 border-b border-gray-200 shrink-0">
-                <h2 className="font-semibold text-gray-900">{projectId?.title || 'Project Chat'}</h2>
+                <h2 className="font-semibold text-gray-900">{projectTitle}</h2>
             </div>
 
             <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">

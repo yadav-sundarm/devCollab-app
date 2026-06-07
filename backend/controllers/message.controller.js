@@ -12,11 +12,11 @@ export const createMessage = async (req, res) => {
 
 export const getMessagesByProject = async (req, res) => {
   try {
-    const requestingUserId = req.user.id;
     const messages = await Message.find({
       projectId: req.params.projectId,
-      $or: [{ senderId: requestingUserId }, { receiverId: requestingUserId }],
-    }).populate("senderId", "userName email");
+    })
+      .populate("senderId", "userName email")
+      .populate("projectId", "title");
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({ message: error.message });

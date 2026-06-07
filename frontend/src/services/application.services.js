@@ -51,7 +51,10 @@ export const updateApplicationStatus = async (
 
 export const getMyApplications = async () => {
   try {
-    const response = await api.get("/myApplications");
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/myApplications`,
+      { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } },
+    );
     return response.data;
   } catch (error) {
     console.error("Error fetching applications:", error);
