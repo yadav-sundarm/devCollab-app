@@ -12,6 +12,7 @@ import ProtectedRoutes from './components/ProtectedRoutes.jsx'
 import MyApplications from './pages/MyApplications.jsx'
 import Chat from './pages/Chat.jsx'
 import MyChats from './pages/MyChats.jsx'
+import Settings from './pages/Settings.jsx'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 function App() {
@@ -20,6 +21,11 @@ function App() {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/settings" element={
+          <ProtectedRoutes>
+            <Layout><Settings /></Layout>
+          </ProtectedRoutes>
+        } />
         <Route path="/" element={<Layout><Homepage /></Layout>} />
         <Route path="/projects/createProject" element={
           <ProtectedRoutes>

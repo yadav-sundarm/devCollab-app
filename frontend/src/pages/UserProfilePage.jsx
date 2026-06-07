@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { fetchGithubData } from '../services/github.services.js';
 import { fetchUserById } from '../services/user.services.js';
 import { Star } from 'lucide-react'
+import { useNavigate } from 'react-router-dom';
 const UserProfile = () => {
     const { userId } = useParams()
     const loggedInUser = JSON.parse(localStorage.getItem('user'))
@@ -10,6 +11,7 @@ const UserProfile = () => {
     const [userData, setUserData] = useState(null)
     const [githubData, setGithubData] = useState(null)
     const [loading, setLoading] = useState(true)
+    const navigate = useNavigate()
 
     useEffect(() => {
         const loadData = async () => {
@@ -76,7 +78,7 @@ const UserProfile = () => {
                                 </a>
                             )}
                             {isOwnProfile && (
-                                <button className="text-xs text-violet-600 border border-violet-300 hover:border-violet-500 px-3 py-1.5 rounded-lg transition">
+                                <button onClick={() => navigate('/settings')} className="text-xs text-violet-600 border border-violet-300 hover:border-violet-500 px-3 py-1.5 rounded-lg transition">
                                     Edit Profile
                                 </button>
                             )}

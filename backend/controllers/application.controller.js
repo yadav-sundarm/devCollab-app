@@ -20,6 +20,9 @@ export const createApplication = async (req, res) => {
       projectId,
       applicantId,
     });
+    await Project.findByIdAndUpdate(projectId, {
+      $push: { applications: application._id },
+    });
     res.status(201).json(application);
   } catch (error) {
     res.status(500).json({ message: error.message });

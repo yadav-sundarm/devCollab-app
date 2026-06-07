@@ -1,4 +1,6 @@
 import Project from "../models/Project.js";
+import Application from "../models/Application.js";
+import Message from "../models/Message.js";
 
 export const createProject = async (req, res) => {
   try {
@@ -19,6 +21,8 @@ export const deleteProject = async (req, res) => {
       return res.status(403).json({ message: "Unauthorized" });
     }
     await Project.findByIdAndDelete(req.params.projectId);
+    await Application.deleteMany({ projectId: req.params.projectId });
+    await Message.deleteMany({ projectId: req.params.projectId });
     res.status(200).json({ message: "Project deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -55,6 +59,7 @@ export const updateProject = async (req, res) => {
     if (project.owner.toString() !== req.user.id) {
       return res.status(403).json({ message: "Unauthorized" });
     }
+
     const updatedProject = await Project.findByIdAndUpdate(
       req.params.projectId,
       req.body,

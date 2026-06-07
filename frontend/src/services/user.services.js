@@ -21,3 +21,30 @@ export const fetchUserById = async (userId) => {
     throw error;
   }
 };
+
+export const updateUser = async (userData) => {
+  try {
+    const response = await api.patch("/update", userData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const changePassword = async (passwordData) => {
+  try {
+    const response = await api.patch("/changePassword", passwordData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteUser = async () => {
+  try {
+    const response = await api.delete("/delete");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
