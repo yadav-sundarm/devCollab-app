@@ -14,7 +14,11 @@ import Message from "./models/Message.js";
 
 dotenv.config(); // must be at the very top
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  credentials: true
+}));
 app.use(express.json());
 
 const PORT = process.env.PORT || 8000;
@@ -24,8 +28,11 @@ const startserver = async () => {
     await connectDB();
     const server = createServer(app);
     const io = new Server(server, {
-      cors: { origin: "*" },
-    });
+      cors: {
+      origin: process.env.CLIENT_URL,
+      methods: ["GET", "POST"]
+      }
+  });
 
     io.on("connection", (socket) => {
       console.log("User connected:", socket.id);
