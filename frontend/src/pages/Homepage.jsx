@@ -28,8 +28,6 @@ const Homepage = () => {
                     const data = await getProjects(page)
                     setProjects(data?.projects || [])
                     setTotalPages(data?.totalPages || 1) 
-                    setProjects(data.projects)
-                    setTotalPages(data.totalPages)
                 }
             } catch (error) {
                 console.error(error)
