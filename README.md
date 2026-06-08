@@ -143,11 +143,21 @@ npm run dev
 
 ## Live Demo
 
-[Coming soon]
+Link : https://dev-collab-app-zeta.vercel.app/
 
 ## Screenshots
 
-[Coming soon]
+*Homepage :*
+<img width="1602" height="792" alt="image" src="https://github.com/user-attachments/assets/b0f5af6d-5f01-4ba8-b1ed-93074bbf35b5" />
+
+*Create A project :*
+<img width="1596" height="833" alt="image" src="https://github.com/user-attachments/assets/9c3719bd-751d-4d85-bac1-3afb88845275" />
+
+*User Dashboard :*
+<img width="1612" height="802" alt="image" src="https://github.com/user-attachments/assets/8146c97a-091e-4b31-9605-e91c9f7e3c48" />
+
+*User Profile with Github info :*
+<img width="1622" height="880" alt="image" src="https://github.com/user-attachments/assets/7fe3b884-21ee-4a9b-a520-43dd05913f92" />
 
 ## License
 
