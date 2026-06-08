@@ -12,9 +12,9 @@ const RightPanel = () => {
             try {
                 const user = JSON.parse(localStorage.getItem('user'))
 
-                // ✅ getProjects now returns { projects, totalPages... }
-                const data = await getProjects(1, 50)  // fetch more for better suggestions
-                const allProjects = data.projects       // ← extract array first!
+                
+                const data = await getProjects(1, 50)
+                const allProjects = data?.projects || []
 
                 const relevant = allProjects.filter(project =>
                     project.requiredSkills.some(skill =>
