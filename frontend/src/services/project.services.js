@@ -12,9 +12,9 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export const getProjects = async () => {
+export const getProjects = async (page = 1, limit = 10) => {
   try {
-    const response = await api.get("/");
+    const response = await api.get(`/?page=${page}&limit=${limit}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching projects:", error);
@@ -74,7 +74,9 @@ export const getProjectsByOwner = async () => {
 
 export const searchProjects = async (query) => {
   try {
-    const response = await api.get(`/search?query=${query}`);
+    const response = await api.get(
+      `/search?query=${encodeURIComponent(query)}`,
+    );
     return response.data;
   } catch (error) {
     console.error("Error searching projects:", error);

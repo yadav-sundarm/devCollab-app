@@ -4,12 +4,29 @@ import jwt from "jsonwebtoken";
 
 export const signupController = async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const existingUser = await User.findOne({ email: req.body.email });
+    const {
+      userName,
+      email,
+      password,
+      githubLink,
+      linkedinLink,
+      portFolioLink,
+      skills,
+    } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "Email already in use" });
     }
-    const user = await User.create({ ...req.body, password: hashedPassword });
+    const user = await User.create({
+      userName,
+      email,
+      password: hashedPassword,
+      githubLink,
+      linkedinLink,
+      portFolioLink,
+      skills,
+    });
     const dataToSend = await User.findById(user._id).select("-password");
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
@@ -25,11 +42,12 @@ export const loginController = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid password" });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",

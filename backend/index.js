@@ -12,14 +12,17 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import Message from "./models/Message.js";
 
-dotenv.config(); // must be at the very top
+dotenv.config();
 const app = express();
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
+  }),
+);
 app.use(express.json());
+app.set("trust proxy", 1);
 
 const PORT = process.env.PORT || 8000;
 
@@ -29,10 +32,10 @@ const startserver = async () => {
     const server = createServer(app);
     const io = new Server(server, {
       cors: {
-      origin: process.env.CLIENT_URL,
-      methods: ["GET", "POST"]
-      }
-  });
+        origin: process.env.CLIENT_URL,
+        methods: ["GET", "POST"],
+      },
+    });
 
     io.on("connection", (socket) => {
       console.log("User connected:", socket.id);

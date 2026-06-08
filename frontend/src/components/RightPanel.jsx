@@ -11,17 +11,21 @@ const RightPanel = () => {
         const fetchProjects = async () => {
             try {
                 const user = JSON.parse(localStorage.getItem('user'))
-                const projects = await getProjects()
 
-                const relevant = projects.filter(project =>
+                // ✅ getProjects now returns { projects, totalPages... }
+                const data = await getProjects(1, 50)  // fetch more for better suggestions
+                const allProjects = data.projects       // ← extract array first!
+
+                const relevant = allProjects.filter(project =>
                     project.requiredSkills.some(skill =>
                         user?.skills?.includes(skill)
                     )
                 )
+
                 setSuggestedProjects(
                     relevant.length > 0
                         ? relevant.slice(0, 5)
-                        : projects.slice(0, 5)
+                        : allProjects.slice(0, 5)
                 )
             } catch (error) {
                 console.error(error)
@@ -35,20 +39,27 @@ const RightPanel = () => {
             <div className="px-4 py-3 border-b border-gray-100">
                 <h3 className="font-semibold text-gray-900 text-sm">Suggested Projects</h3>
             </div>
-            <div className="divide-y divide-gray-100">
-                {suggestedProjects.map(project => (
-                    <div key={project._id} className="px-4 py-3 hover:bg-gray-50 transition">
-                        <p className="text-sm font-medium text-gray-800 truncate">{project.title}</p>
-                        <p className="text-xs text-gray-500 mt-0.5 truncate">{project.domain}</p>
-                        <button
-                            onClick={() => navigate(`/projects/${project._id}`)}
-                            className="mt-2 text-xs text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1"
-                        >
-                            View project <ArrowRight className="w-3 h-3" />
-                        </button>
-                    </div>
-                ))}
-            </div>
+
+            {suggestedProjects.length === 0 ? (
+                <div className="px-4 py-6 text-center">
+                    <p className="text-xs text-gray-400">No suggestions yet</p>
+                </div>
+            ) : (
+                <div className="divide-y divide-gray-100">
+                    {suggestedProjects.map(project => (
+                        <div key={project._id} className="px-4 py-3 hover:bg-gray-50 transition">
+                            <p className="text-sm font-medium text-gray-800 truncate">{project.title}</p>
+                            <p className="text-xs text-gray-500 mt-0.5 truncate">{project.domain}</p>
+                            <button
+                                onClick={() => navigate(`/projects/${project._id}`)}
+                                className="mt-2 text-xs text-violet-600 hover:text-violet-700 font-medium flex items-center gap-1"
+                            >
+                                View project <ArrowRight className="w-3 h-3" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     )
 }

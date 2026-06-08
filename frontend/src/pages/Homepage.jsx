@@ -6,15 +6,29 @@ import { Briefcase, Tag, ArrowRight } from 'lucide-react';
 const Homepage = () => {
     const [projects, setProjects] = useState([])
     const [loading, setLoading] = useState(true)
+    const [page, setPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
     const query = searchParams.get('search')
 
     useEffect(() => {
+        setPage(1)
+    }, [query])
+
+    useEffect(() => {
         const fetchProjects = async () => {
+            setLoading(true)
             try {
-                const data = query ? await searchProjects(query) : await getProjects()
-                setProjects(data)
+                if (query) {
+                    const data = await searchProjects(query)
+                    setProjects(data)
+                    setTotalPages(1)
+                } else {
+                    const data = await getProjects(page)
+                    setProjects(data.projects)
+                    setTotalPages(data.totalPages)
+                }
             } catch (error) {
                 console.error(error)
             } finally {
@@ -22,7 +36,7 @@ const Homepage = () => {
             }
         }
         fetchProjects()
-    }, [query])
+    }, [page, query])
 
     if (loading) return (
         <div className="space-y-3">
@@ -43,9 +57,18 @@ const Homepage = () => {
                     Results for <span className="font-medium text-gray-800">"{query}"</span>
                 </p>
             )}
+
             {projects.length === 0 ? (
                 <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
                     <p className="text-gray-500 text-sm">No projects found.</p>
+                    {query && (
+                        <button
+                            onClick={() => navigate('/')}
+                            className="mt-3 text-sm text-violet-600 hover:underline"
+                        >
+                            Clear search
+                        </button>
+                    )}
                 </div>
             ) : (
                 projects.map(project => (
@@ -66,7 +89,9 @@ const Homepage = () => {
                                     ))}
                                 </div>
                             </div>
-                            <span className={`shrink-0 text-xs px-2.5 py-1 rounded-full font-medium ${project.status === 'Open' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                            <span className={`shrink-0 text-xs px-2.5 py-1 rounded-full font-medium ${project.status === 'Open'
+                                ? 'bg-green-100 text-green-700'
+                                : 'bg-gray-100 text-gray-600'
                                 }`}>
                                 {project.status}
                             </span>
@@ -81,6 +106,28 @@ const Homepage = () => {
                         </div>
                     </div>
                 ))
+            )}
+
+            {!query && totalPages > 1 && (
+                <div className="flex items-center justify-center gap-4 mt-2">
+                    <button
+                        disabled={page === 1}
+                        onClick={() => setPage(p => p - 1)}
+                        className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
+                    >
+                        ← Prev
+                    </button>
+                    <span className="text-sm text-gray-500">
+                        Page {page} of {totalPages}
+                    </span>
+                    <button
+                        disabled={page === totalPages}
+                        onClick={() => setPage(p => p + 1)}
+                        className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
+                    >
+                        Next →
+                    </button>
+                </div>
             )}
         </div>
     )

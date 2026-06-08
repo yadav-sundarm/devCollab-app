@@ -1,10 +1,19 @@
 import Project from "../models/Project.js";
 import Application from "../models/Application.js";
 import Message from "../models/Message.js";
+import { escapeRegex } from "../utils/escapeRegex.js";
 
 export const createProject = async (req, res) => {
   try {
-    const project = await Project.create({ ...req.body, owner: req.user.id });
+    const { title, description, domain, requiredSkills, status } = req.body;
+    const project = await Project.create({
+      title,
+      description,
+      domain,
+      requiredSkills,
+      status,
+      owner: req.user.id,
+    });
     res.status(201).json(project);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -31,8 +40,24 @@ export const deleteProject = async (req, res) => {
 
 export const getAllProjects = async (req, res) => {
   try {
-    const projects = await Project.find();
-    res.status(200).json(projects);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const total = await Project.countDocuments();
+    const projects = await Project.find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      projects,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalProjects: total,
+      hasNextPage: page < Math.ceil(total / limit),
+      hasPrevPage: page > 1,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -52,6 +77,7 @@ export const getProjectById = async (req, res) => {
 
 export const updateProject = async (req, res) => {
   try {
+    const { title, description, domain, requiredSkills, status } = req.body;
     const project = await Project.findById(req.params.projectId);
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
@@ -59,15 +85,11 @@ export const updateProject = async (req, res) => {
     if (project.owner.toString() !== req.user.id) {
       return res.status(403).json({ message: "Unauthorized" });
     }
-
     const updatedProject = await Project.findByIdAndUpdate(
       req.params.projectId,
-      req.body,
+      { title, description, domain, requiredSkills, status },
       { new: true },
     );
-    if (!updatedProject) {
-      return res.status(404).json({ message: "Project not found" });
-    }
     res.status(200).json(updatedProject);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -77,14 +99,21 @@ export const updateProject = async (req, res) => {
 export const searchProjects = async (req, res) => {
   try {
     const { query } = req.query;
+
+    if (!query || query.trim() === "") {
+      return res.status(400).json({ message: "Search query is required" });
+    }
+
+    const safe = escapeRegex(query.trim());
     const projects = await Project.find({
       $or: [
-        { title: { $regex: query, $options: "i" } },
-        { description: { $regex: query, $options: "i" } },
-        { requiredSkills: { $regex: query, $options: "i" } },
-        { domain: { $regex: query, $options: "i" } },
+        { title: { $regex: safe, $options: "i" } },
+        { description: { $regex: safe, $options: "i" } },
+        { requiredSkills: { $regex: safe, $options: "i" } },
+        { domain: { $regex: safe, $options: "i" } },
       ],
     });
+
     res.status(200).json(projects);
   } catch (error) {
     res.status(500).json({ message: error.message });
