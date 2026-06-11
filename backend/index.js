@@ -1,4 +1,5 @@
 import connectDB from "./db/db.js";
+import jwt from "jsonwebtoken";
 import cors from "cors";
 import express from "express";
 import authRoutes from "./routes/auth.routes.js";
@@ -43,7 +44,7 @@ const startserver = async () => {
 
       try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        socket.userId = decoded.userId;
+        socket.userId = decoded.Id;
         next();
       } catch (err) {
         next(new Error("Invalid token"));
