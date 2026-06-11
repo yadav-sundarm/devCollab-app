@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.patch("/update", authMiddleware, updateUser);
 router.delete("/delete", authMiddleware, deleteUser);
-router.post("/complete-profile", authMiddleware, completeProfile);
+router.patch("/complete-profile", authMiddleware, completeProfile);
 router.get("/:userId", authMiddleware, getUserById);
 
 export default router;

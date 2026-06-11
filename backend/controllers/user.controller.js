@@ -44,24 +44,16 @@ export const deleteUser = async (req, res) => {
 export const completeProfile = async (req, res) => {
   try {
     const { skills, linkedinLink, portFolioLink } = req.body;
-
-    if (!skills || skills.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "At least one skill is required" });
-    }
-
     const user = await User.findByIdAndUpdate(
       req.user.id,
       {
-        skills,
-        linkedinLink,
-        portFolioLink,
-        isProfileComplete: true, // ← set here only
+        skills: skills,
+        linkedinLink: linkedinLink,
+        portFolioLink: portFolioLink,
+        isProfileComplete: true,
       },
       { new: true },
     );
-
     if (!user) return res.status(404).json({ message: "User not found" });
     res.status(200).json(user);
   } catch (error) {
