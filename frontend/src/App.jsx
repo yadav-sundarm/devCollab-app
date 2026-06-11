@@ -22,7 +22,7 @@ function App() {
       <Routes>
 
         <Route path="/login" element={<Login />} />
-        <Route path="/github/callback" element={<GitHubCallback />} />
+        <Route path="/auth/callback" element={<GitHubCallback />} />
         <Route path="/complete-profile" element={<ProtectedRoutes><Layout><CompleteProfile /></Layout></ProtectedRoutes>} />
         <Route path="/settings" element={
           <ProtectedRoutes>
