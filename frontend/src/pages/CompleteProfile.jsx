@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { completeUserProfile } from '../services/user.services.jsx'
+import { completeUserProfile } from '../services/user.services.js'
 
 const CompleteProfile = () => {
     const navigate = useNavigate()
