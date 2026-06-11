@@ -6,9 +6,7 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
@@ -17,25 +15,17 @@ export const fetchUserById = async (userId) => {
     const response = await api.get(`/${userId}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching user:", error);
+    console.error("Fetch user error:", error);
     throw error;
   }
 };
 
-export const updateUser = async (userData) => {
+export const updateUserProfile = async (userData) => {
   try {
     const response = await api.patch("/update", userData);
     return response.data;
   } catch (error) {
-    throw error;
-  }
-};
-
-export const changePassword = async (passwordData) => {
-  try {
-    const response = await api.patch("/changePassword", passwordData);
-    return response.data;
-  } catch (error) {
+    console.error("Update profile error:", error);
     throw error;
   }
 };
@@ -45,6 +35,17 @@ export const deleteUser = async () => {
     const response = await api.delete("/delete");
     return response.data;
   } catch (error) {
+    console.error("Delete user error:", error);
+    throw error;
+  }
+};
+
+export const completeUserProfile = async (profileData) => {
+  try {
+    const response = await api.patch("/complete-profile", profileData);
+    return response.data;
+  } catch (error) {
+    console.error("Complete profile error:", error);
     throw error;
   }
 };

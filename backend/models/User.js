@@ -2,22 +2,23 @@ import mongoose from "mongoose";
 
 const userModel = new mongoose.Schema(
   {
+    githubId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     userName: {
       type: String,
       required: true,
     },
     email: {
       type: String,
-      required: true,
-      unique: true,
     },
-    password: {
+    avatar: {
       type: String,
-      required: true,
     },
     githubLink: {
       type: String,
-      required: true,
     },
     linkedinLink: {
       type: String,
@@ -27,15 +28,14 @@ const userModel = new mongoose.Schema(
     },
     skills: {
       type: [String],
-      required: true,
+      default: [],
     },
-    avatar: {
-      type: String,
+    isProfileComplete: {
+      type: Boolean,
+      default: false,
     },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
 const User = mongoose.model("User", userModel);

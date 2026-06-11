@@ -1,60 +1,78 @@
 import User from "../models/User.js";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import axios from "axios";
 
-export const signupController = async (req, res) => {
-  try {
-    const {
-      userName,
-      email,
-      password,
-      githubLink,
-      linkedinLink,
-      portFolioLink,
-      skills,
-    } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already in use" });
-    }
-    const user = await User.create({
-      userName,
-      email,
-      password: hashedPassword,
-      githubLink,
-      linkedinLink,
-      portFolioLink,
-      skills,
-    });
-    const dataToSend = await User.findById(user._id).select("-password");
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-    res.status(201).json({ user: dataToSend, token });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+export const githubAuth = (req, res) => {
+  const url = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&scope=user,user:email`;
+  res.redirect(url);
 };
 
-export const loginController = async (req, res) => {
+export const githubCallback = async (req, res) => {
+  const { code } = req.query;
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+    const tokenRes = await axios.post(
+      "https://github.com/login/oauth/access_token",
+      {
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET,
+        code,
+      },
+      { headers: { Accept: "application/json" } },
+    );
+    const accessToken = tokenRes.data.access_token;
+
+    const { data: githubUser } = await axios.get(
+      "https://api.github.com/user",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      },
+    );
+
+    let email = githubUser.email;
+    if (!email) {
+      const { data: emails } = await axios.get(
+        "https://api.github.com/user/emails",
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
+      const primary = emails.find((e) => e.primary && e.verified);
+      email = primary?.email || null;
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid email or password" });
+    let user = await User.findOne({ githubId: String(githubUser.id) });
+    if (!user) {
+      user = await User.create({
+        githubId: String(githubUser.id),
+        userName: githubUser.login,
+        email,
+        avatar: githubUser.avatar_url,
+        githubLink: githubUser.html_url,
+        skills: [],
+      });
     }
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
-    const dataToSend = await User.findById(user._id).select("-password");
-    res.status(200).json({ user: dataToSend, token });
+
+    const userData = encodeURIComponent(
+      JSON.stringify({
+        _id: user._id,
+        userName: user.userName,
+        email: user.email,
+        avatar: user.avatar,
+        githubLink: user.githubLink,
+        skills: user.skills,
+        isProfileComplete: user.isProfileComplete,
+      }),
+    );
+
+    res.redirect(
+      `${process.env.CLIENT_URL}/auth/callback?token=${token}&user=${userData}`,
+    );
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("GitHub OAuth error:", error.message);
+    res.redirect(`${process.env.CLIENT_URL}/login?error=github_failed`);
   }
 };

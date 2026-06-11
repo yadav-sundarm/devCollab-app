@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { User, Lock, Bell, Trash2, Save, ChevronRight, Shield } from 'lucide-react'
-import { updateUser, changePassword, deleteUser } from '../services/user.services'
+import { User, Bell, Trash2, Save, ChevronRight, Shield } from 'lucide-react'
+import { updateUserProfile, deleteUser } from '../services/user.services.js'
 
 const Settings = () => {
     const navigate = useNavigate()
@@ -12,16 +12,7 @@ const Settings = () => {
     const [profileForm, setProfileForm] = useState({
         userName: user?.userName || '',
         email: user?.email || '',
-        githubLink: user?.githubLink || '',
-        linkedinLink: user?.linkedinLink || '',
-        portFolioLink: user?.portFolioLink || '',
         skills: user?.skills?.join(', ') || '',
-    })
-
-    const [passwordForm, setPasswordForm] = useState({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
     })
 
     const [notifications, setNotifications] = useState({
@@ -31,9 +22,9 @@ const Settings = () => {
         emailNotifications: false,
     })
 
+    // ✅ Password tab removed — GitHub OAuth
     const tabs = [
         { id: 'profile', label: 'Profile', icon: <User className="w-4 h-4" /> },
-        { id: 'password', label: 'Password', icon: <Lock className="w-4 h-4" /> },
         { id: 'notifications', label: 'Notifications', icon: <Bell className="w-4 h-4" /> },
         { id: 'privacy', label: 'Privacy', icon: <Shield className="w-4 h-4" /> },
         { id: 'danger', label: 'Danger Zone', icon: <Trash2 className="w-4 h-4" /> },
@@ -48,41 +39,22 @@ const Settings = () => {
         setProfileForm({ ...profileForm, [e.target.name]: e.target.value })
     }
 
-    const handlePasswordChange = (e) => {
-        setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value })
-    }
-
     const handleToggle = (key) => {
         setNotifications({ ...notifications, [key]: !notifications[key] })
     }
 
     const handleProfileSave = async () => {
         try {
-            const skills = profileForm.skills.split(',').map(s => s.trim())
-            const updated = await updateUser({ ...profileForm, skills })
+            const skills = profileForm.skills.split(',').map(s => s.trim()).filter(Boolean)
+            const updated = await updateUserProfile({
+                userName: profileForm.userName,
+                email: profileForm.email,
+                skills,
+            })
             localStorage.setItem('user', JSON.stringify(updated))
             showMessage('Profile updated successfully!', 'success')
         } catch (error) {
-            showMessage('Failed to update profile', error.response?.data?.message || 'error')
-        }
-    }
-
-    const handlePasswordSave = async () => {
-        if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-            return showMessage('New passwords do not match!', 'error')
-        }
-        if (passwordForm.newPassword.length < 6) {
-            return showMessage('Password must be at least 6 characters!', 'error')
-        }
-        try {
-            await changePassword({
-                currentPassword: passwordForm.currentPassword,
-                newPassword: passwordForm.newPassword,
-            })
-            setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
-            showMessage('Password updated successfully!', 'success')
-        } catch (error) {
-            showMessage(error.response?.data?.message || 'Failed to update password', 'error')
+            showMessage(error.response?.data?.message || 'Failed to update profile', 'error')
         }
     }
 
@@ -92,32 +64,29 @@ const Settings = () => {
             await deleteUser()
             localStorage.removeItem('user')
             localStorage.removeItem('token')
-            navigate('/signup')
+            navigate('/login')
         } catch (error) {
-            showMessage('Failed to delete account', error.response?.data?.message || 'error')
+            showMessage(error.response?.data?.message || 'Failed to delete account', 'error')
         }
     }
 
     return (
         <div className="space-y-4">
-            {/* Header */}
             <div className="bg-white rounded-xl border border-gray-200 px-6 py-4">
                 <h1 className="text-xl font-semibold text-gray-900">Settings</h1>
                 <p className="text-sm text-gray-500 mt-0.5">Manage your account preferences</p>
             </div>
 
-            {/* Toast Message */}
             {message.text && (
                 <div className={`px-4 py-3 rounded-xl text-sm font-medium border ${message.type === 'success'
-                    ? 'bg-green-50 text-green-700 border-green-200'
-                    : 'bg-red-50 text-red-700 border-red-200'
+                        ? 'bg-green-50 text-green-700 border-green-200'
+                        : 'bg-red-50 text-red-700 border-red-200'
                     }`}>
                     {message.text}
                 </div>
             )}
 
             <div className="flex gap-4 items-start">
-                {/* Tabs Sidebar */}
                 <div className="w-56 shrink-0 bg-white rounded-xl border border-gray-200 py-2">
                     {tabs.map(tab => (
                         <button
@@ -137,7 +106,6 @@ const Settings = () => {
                     ))}
                 </div>
 
-                {/* Content */}
                 <div className="flex-1 min-w-0">
 
                     {/* Profile Tab */}
@@ -147,9 +115,10 @@ const Settings = () => {
                                 <h2 className="font-semibold text-gray-900">Profile Information</h2>
                                 <p className="text-sm text-gray-500 mt-0.5">Update your personal details</p>
                             </div>
+
                             <div className="flex items-center gap-4">
                                 <img
-                                    src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.userName}`}
+                                    src={user?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${user?.userName}`}
                                     alt="avatar"
                                     className="w-16 h-16 rounded-full border-2 border-gray-200"
                                 />
@@ -158,12 +127,11 @@ const Settings = () => {
                                     <p className="text-xs text-gray-500 mt-0.5">{user?.email}</p>
                                 </div>
                             </div>
+
                             <div className="grid grid-cols-2 gap-4">
                                 {[
                                     { label: 'Username', name: 'userName', type: 'text' },
                                     { label: 'Email', name: 'email', type: 'email' },
-                                    { label: 'GitHub Link', name: 'githubLink', type: 'text' },
-                                    { label: 'LinkedIn Link', name: 'linkedinLink', type: 'text' },
                                 ].map(field => (
                                     <div key={field.name}>
                                         <label className="block text-xs font-medium text-gray-700 mb-1.5">{field.label}</label>
@@ -177,16 +145,6 @@ const Settings = () => {
                                     </div>
                                 ))}
                                 <div className="col-span-2">
-                                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Portfolio Link</label>
-                                    <input
-                                        type="text"
-                                        name="portFolioLink"
-                                        value={profileForm.portFolioLink}
-                                        onChange={handleProfileChange}
-                                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                                    />
-                                </div>
-                                <div className="col-span-2">
                                     <label className="block text-xs font-medium text-gray-700 mb-1.5">Skills (comma separated)</label>
                                     <input
                                         type="text"
@@ -198,48 +156,13 @@ const Settings = () => {
                                     />
                                 </div>
                             </div>
+
                             <div className="flex justify-end pt-2">
                                 <button
                                     onClick={handleProfileSave}
                                     className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white text-sm px-4 py-2 rounded-lg transition"
                                 >
                                     <Save className="w-4 h-4" /> Save Changes
-                                </button>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Password Tab */}
-                    {activeTab === 'password' && (
-                        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
-                            <div>
-                                <h2 className="font-semibold text-gray-900">Change Password</h2>
-                                <p className="text-sm text-gray-500 mt-0.5">Make sure your password is strong</p>
-                            </div>
-                            <div className="space-y-4 max-w-md">
-                                {[
-                                    { label: 'Current Password', name: 'currentPassword' },
-                                    { label: 'New Password', name: 'newPassword' },
-                                    { label: 'Confirm New Password', name: 'confirmPassword' },
-                                ].map(field => (
-                                    <div key={field.name}>
-                                        <label className="block text-xs font-medium text-gray-700 mb-1.5">{field.label}</label>
-                                        <input
-                                            type="password"
-                                            name={field.name}
-                                            value={passwordForm[field.name]}
-                                            onChange={handlePasswordChange}
-                                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 transition"
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="flex justify-end pt-2">
-                                <button
-                                    onClick={handlePasswordSave}
-                                    className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white text-sm px-4 py-2 rounded-lg transition"
-                                >
-                                    <Save className="w-4 h-4" /> Update Password
                                 </button>
                             </div>
                         </div>
@@ -333,4 +256,4 @@ const Settings = () => {
     )
 }
 
-export default Settings;
+export default Settings

@@ -2,16 +2,16 @@ import express from "express";
 import {
   getUserById,
   updateUser,
-  changePassword,
   deleteUser,
+  completeProfile,
 } from "../controllers/user.controller.js";
 import authMiddleware from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
 router.patch("/update", authMiddleware, updateUser);
-router.patch("/changePassword", authMiddleware, changePassword);
 router.delete("/delete", authMiddleware, deleteUser);
+router.post("/complete-profile", authMiddleware, completeProfile);
 router.get("/:userId", authMiddleware, getUserById);
 
 export default router;

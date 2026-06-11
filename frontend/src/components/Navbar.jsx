@@ -66,12 +66,6 @@ const Navbar = () => {
                             >
                                 Login
                             </button>
-                            <button
-                                onClick={() => navigate('/signup')}
-                                className="text-sm text-white bg-violet-600 hover:bg-violet-700 px-3 py-1.5 rounded-lg transition"
-                            >
-                                Sign up
-                            </button>
                         </div>
                     )}
                 </div>

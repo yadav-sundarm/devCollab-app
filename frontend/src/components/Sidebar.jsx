@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Home, PlusSquare, FileText, LayoutDashboard, User, LogOut, LogIn, UserPlus } from 'lucide-react'
+import { Home, PlusSquare, FileText, LayoutDashboard, User, LogOut, LogIn } from 'lucide-react'
 
 const Sidebar = () => {
     const navigate = useNavigate()
@@ -62,9 +62,6 @@ const Sidebar = () => {
                             <>
                                 <button onClick={() => navigate('/login')} className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition">
                                     <LogIn className="w-4 h-4 text-gray-400" /> Login
-                                </button>
-                                <button onClick={() => navigate('/signup')} className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition">
-                                    <UserPlus className="w-4 h-4 text-gray-400" /> Signup
                                 </button>
                             </>
                         )}

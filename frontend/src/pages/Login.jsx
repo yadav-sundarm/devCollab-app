@@ -1,29 +1,20 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { loginService } from '../services/auth.services.js';
-import { Eye, EyeOff } from 'lucide-react';
+import { useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const Login = () => {
-    const [userData, setUserData] = useState({ email: '', password: '' })
-    const [error, setError] = useState('')
-    const [loading, setLoading] = useState(false)
-    const [showPassword, setShowPassword] = useState(false)
     const navigate = useNavigate()
+    const [searchParams] = useSearchParams()
+    const error = searchParams.get('error')
 
-    const handleChange = (e) => setUserData({ ...userData, [e.target.name]: e.target.value })
-
-    const onSubmit = async (e) => {
-        e.preventDefault()
-        setLoading(true)
-        setError('')
-        try {
-            await loginService(userData)
+    useEffect(() => {
+        // If already logged in redirect to home
+        if (localStorage.getItem('token')) {
             navigate('/')
-        } catch {
-            setError('Invalid email or password. Please try again.')
-        } finally {
-            setLoading(false)
         }
+    }, [])
+
+    const handleGithubLogin = () => {
+        window.location.href = `${import.meta.env.VITE_API_URL}/api/auth/github`
     }
 
     return (
@@ -33,63 +24,27 @@ const Login = () => {
                     <h1 className="text-3xl font-bold text-violet-600">DevColab</h1>
                     <p className="text-gray-500 text-sm mt-1">Find developers to build with</p>
                 </div>
+
                 <div className="bg-white rounded-xl border border-gray-200 p-8">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-6">Sign in</h2>
-                    {error && (
+                    <h2 className="text-xl font-semibold text-gray-900 mb-2 text-center">Welcome!</h2>
+                    <p className="text-sm text-gray-500 text-center mb-6">
+                        Sign in or create an account using GitHub
+                    </p>
+
+                    {error === 'github_failed' && (
                         <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg">
-                            {error}
+                            GitHub login failed. Please try again.
                         </div>
                     )}
-                    <form onSubmit={onSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="you@example.com"
-                                value={userData.email}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
-                            />
-                        </div>
 
-                        {/* Password with eye toggle */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                            <div className="relative">
-                                <input
-                                    type={showPassword ? 'text' : 'password'}
-                                    name="password"
-                                    placeholder="••••••••"
-                                    value={userData.password}
-                                    onChange={handleChange}
-                                    required
-                                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
-                                >
-                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                </button>
-                            </div>
-                        </div>
+                    <button
+                        onClick={handleGithubLogin}
+                        className="w-full flex items-center justify-center gap-3 bg-gray-900 hover:bg-gray-800 text-white py-3 rounded-lg text-sm font-medium transition"
+                    >Continue with GitHub
+                    </button>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white py-2.5 rounded-lg text-sm font-medium transition"
-                        >
-                            {loading ? 'Signing in...' : 'Sign in'}
-                        </button>
-                    </form>
-                    <p className="text-center text-sm text-gray-500 mt-6">
-                        Don't have an account?{' '}
-                        <button onClick={() => navigate('/signup')} className="text-violet-600 hover:underline font-medium">
-                            Sign up
-                        </button>
+                    <p className="text-center text-xs text-gray-400 mt-6">
+                        By continuing, you agree to our Terms of Service
                     </p>
                 </div>
             </div>
@@ -97,4 +52,4 @@ const Login = () => {
     )
 }
 
-export default Login;
+export default Login

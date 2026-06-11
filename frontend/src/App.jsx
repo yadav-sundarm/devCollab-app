@@ -1,6 +1,5 @@
 import Homepage from './pages/Homepage.jsx'
 import './App.css'
-import Signup from './pages/Signup.jsx'
 import Login from './pages/Login.jsx'
 import Project from './pages/Project.jsx'
 import CreateProject from './pages/CreateProject.jsx'
@@ -11,6 +10,8 @@ import Layout from './components/Layout.jsx'
 import ProtectedRoutes from './components/ProtectedRoutes.jsx'
 import MyApplications from './pages/MyApplications.jsx'
 import Chat from './pages/Chat.jsx'
+import GitHubCallback from './pages/GitHubCallback.jsx'
+import CompleteProfile from './pages/CompleteProfile.jsx'
 import MyChats from './pages/MyChats.jsx'
 import Settings from './pages/Settings.jsx'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
@@ -19,8 +20,10 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/signup" element={<Signup />} />
+
         <Route path="/login" element={<Login />} />
+        <Route path="/github/callback" element={<GitHubCallback />} />
+        <Route path="/complete-profile" element={<ProtectedRoutes><Layout><CompleteProfile /></Layout></ProtectedRoutes>} />
         <Route path="/settings" element={
           <ProtectedRoutes>
             <Layout><Settings /></Layout>

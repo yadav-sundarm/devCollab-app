@@ -15,7 +15,11 @@ const Chat = () => {
     const socketRef = useRef(null)
 
     useEffect(() => {
-        socketRef.current = io(import.meta.env.VITE_API_URL)
+        socketRef.current = io(import.meta.env.VITE_API_URL, {
+            auth: {
+                token: localStorage.getItem("token")
+            }
+        });
         socketRef.current.emit('joinRoom', projectId)
 
         const loadData = async () => {

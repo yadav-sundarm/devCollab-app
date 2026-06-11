@@ -36,6 +36,20 @@ const startserver = async () => {
       },
     });
 
+    io.use((socket, next) => {
+      const token = socket.handshake.auth.token;
+
+      if (!token) return next(new Error("Unauthorized"));
+
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        socket.userId = decoded.userId;
+        next();
+      } catch (err) {
+        next(new Error("Invalid token"));
+      }
+    });
+
     io.on("connection", (socket) => {
       console.log("User connected:", socket.id);
 
@@ -45,11 +59,11 @@ const startserver = async () => {
       });
 
       socket.on("sendMessage", async (data) => {
-        const { projectId, senderId, receiverId, content } = data;
+        const { projectId, receiverId, content } = data;
         try {
           const message = await Message.create({
             projectId,
-            senderId,
+            senderId: socket.userId,
             receiverId,
             content,
           });
