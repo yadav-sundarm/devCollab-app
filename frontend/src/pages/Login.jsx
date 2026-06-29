@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
-import { Github } from 'lucide-react'
 
 const Login = () => {
     const navigate = useNavigate()
@@ -42,7 +41,6 @@ const Login = () => {
                         onClick={handleGithubLogin}
                         className="w-full flex items-center justify-center gap-3 bg-gray-900 hover:bg-gray-800 text-white py-3 rounded-lg text-sm font-medium transition"
                     >
-                        <Github className="w-5 h-5" />
                         Continue with GitHub
                     </button>
                     <p className="text-center text-xs text-gray-400 mt-6">
