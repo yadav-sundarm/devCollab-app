@@ -15,17 +15,19 @@ const GitHubCallback = () => {
         }
 
         try {
-            // Save token and user to localStorage
             const user = JSON.parse(decodeURIComponent(userData))
             localStorage.setItem('token', token)
             localStorage.setItem('user', JSON.stringify(user))
 
-            // Check if profile is complete
             if (!user.isProfileComplete) {
                 navigate('/complete-profile')
-            } else {
-                navigate('/')
+                return
             }
+
+            const redirectTo = sessionStorage.getItem('redirectAfterLogin') || '/'
+            sessionStorage.removeItem('redirectAfterLogin')
+            navigate(redirectTo, { replace: true })
+
         } catch (error) {
             console.error('Callback error:', error)
             navigate('/login?error=github_failed')
@@ -42,4 +44,4 @@ const GitHubCallback = () => {
     )
 }
 
-export default GitHubCallback;
+export default GitHubCallback
