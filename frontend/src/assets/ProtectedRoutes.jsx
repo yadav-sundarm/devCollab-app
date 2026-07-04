@@ -9,11 +9,14 @@ const ProtectedRoutes = ({ children }) => {
 
     useEffect(() => {
         if (!token) {
-            navigate('/login', { state: { from: location.pathname } })
+            navigate('/login', {
+                state: { from: location.pathname },
+                replace: true
+            })
             return
         }
         if (token && user && !user.isProfileComplete) {
-            navigate('/complete-profile')
+            navigate('/complete-profile', { replace: true })
         }
     }, [token])
 
