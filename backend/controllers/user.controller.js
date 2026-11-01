@@ -1,7 +1,12 @@
 import User from "../models/User.js";
+import mongoose from "mongoose";
 
 export const getUserById = async (req, res) => {
   try {
+    if (!mongoose.isObjectIdOrHexString(req.params.userId)) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     const user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ message: "User not found" });
     res.status(200).json(user);

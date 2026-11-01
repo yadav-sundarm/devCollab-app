@@ -4,17 +4,17 @@ import { getProjects, searchProjects } from '../services/project.services.js';
 import { Briefcase, Tag, ArrowRight } from 'lucide-react';
 
 const Homepage = () => {
-    const [projects, setProjects] = useState([])
-    const [loading, setLoading] = useState(true)
-    const [page, setPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(1)
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
     const query = searchParams.get('search')
-
-    useEffect(() => {
-        setPage(1)
-    }, [query])
+    const [projects, setProjects] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [pagination, setPagination] = useState(() => ({ query, page: 1 }))
+    const [totalPages, setTotalPages] = useState(1)
+    if (pagination.query !== query) {
+        setPagination({ query, page: 1 })
+    }
+    const page = pagination.page
 
     useEffect(() => {
         const fetchProjects = async () => {
@@ -112,7 +112,7 @@ const Homepage = () => {
                 <div className="flex items-center justify-center gap-4 mt-2">
                     <button
                         disabled={page === 1}
-                        onClick={() => setPage(p => p - 1)}
+                        onClick={() => setPagination(current => ({ ...current, page: current.page - 1 }))}
                         className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
                     >
                         ← Prev
@@ -122,7 +122,7 @@ const Homepage = () => {
                     </span>
                     <button
                         disabled={page === totalPages}
-                        onClick={() => setPage(p => p + 1)}
+                        onClick={() => setPagination(current => ({ ...current, page: current.page + 1 }))}
                         className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg disabled:opacity-40 hover:bg-gray-50 transition"
                     >
                         Next →

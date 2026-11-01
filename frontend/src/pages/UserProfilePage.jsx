@@ -14,6 +14,7 @@ const UserProfile = () => {
     const githubData = githubResult?.userId === userId ? githubResult.data : null
     const loading = !userResult || userResult.userId !== userId
     const profileError = userResult?.userId === userId ? userResult.error : null
+    const githubError = githubResult?.userId === userId ? githubResult.error : null
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -40,9 +41,16 @@ const UserProfile = () => {
         const loadGithub = async () => {
             try {
                 const github = await fetchGithubData(userId)
-                if (isCurrent) setGithubResult({ userId, data: github })
+                if (isCurrent) setGithubResult({ userId, data: github, error: null })
             } catch (error) {
                 console.error('Error loading GitHub profile data:', error)
+                if (isCurrent) {
+                    setGithubResult({
+                        userId,
+                        data: null,
+                        error: 'GitHub profile data is temporarily unavailable.',
+                    })
+                }
             }
         }
 
@@ -117,6 +125,12 @@ const UserProfile = () => {
                     )}
                 </div>
             </div>
+
+            {githubError && (
+                <p role="status" className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+                    {githubError}
+                </p>
+            )}
 
             {/* GitHub stats */}
             {githubData && (

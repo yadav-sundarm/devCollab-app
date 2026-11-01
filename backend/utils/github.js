@@ -44,18 +44,12 @@ export const getRepos = async (username) => {
   }
 };
 
-export const getTopLanguages = async (username) => {
-  try {
-    const repos = await getRepos(username);
-    const languages = {};
-    repos.forEach((repo) => {
-      if (repo.language) {
-        languages[repo.language] = (languages[repo.language] || 0) + 1;
-      }
-    });
-    return languages;
-  } catch (error) {
-    console.log("Error fetching languages : ", error);
-    throw error;
-  }
+export const getTopLanguages = (repos) => {
+  const languages = {};
+  repos.forEach((repo) => {
+    if (repo.language) {
+      languages[repo.language] = (languages[repo.language] || 0) + 1;
+    }
+  });
+  return languages;
 };
