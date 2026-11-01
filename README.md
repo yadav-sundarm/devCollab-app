@@ -82,7 +82,12 @@ JWT_SECRET=your_jwt_secret
 CLIENT_URL=http://localhost:5173
 GITHUB_CLIENT_ID=your_github_oauth_client_id
 GITHUB_CLIENT_SECRET=your_github_oauth_client_secret
+GITHUB_API=your_github_personal_access_token
 ```
+
+`GITHUB_API` is optional, but a GitHub personal access token increases the API
+rate limit. Keep it only in the backend `.env` file and never expose it through
+frontend environment variables.
 
 Start the backend:
 

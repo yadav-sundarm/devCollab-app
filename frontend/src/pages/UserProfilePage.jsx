@@ -48,7 +48,7 @@ const UserProfile = () => {
                     setGithubResult({
                         userId,
                         data: null,
-                        error: 'GitHub profile data is temporarily unavailable.',
+                        error: error.response?.data?.message || 'GitHub profile data is temporarily unavailable.',
                     })
                 }
             }
@@ -126,9 +126,9 @@ const UserProfile = () => {
                 </div>
             </div>
 
-            {githubError && (
+            {(githubError || githubData?.warning) && (
                 <p role="status" className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
-                    {githubError}
+                    {githubError || githubData.warning}
                 </p>
             )}
 

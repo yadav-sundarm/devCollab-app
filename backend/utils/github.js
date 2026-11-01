@@ -4,6 +4,17 @@ const githubApi = axios.create({
   baseURL: "https://api.github.com",
 });
 
+githubApi.interceptors.request.use((config) => {
+  if (process.env.GITHUB_API) {
+    config.headers.Authorization = `Bearer ${process.env.GITHUB_API}`;
+  } else {
+    delete config.headers.Authorization;
+  }
+  config.headers.Accept = "application/vnd.github+json";
+  config.headers["X-GitHub-Api-Version"] = "2022-11-28";
+  return config;
+});
+
 export const getUserProfile = async (githubUrl) => {
   try {
     const username = githubUrl.replace(/\/$/, "").split("/").pop();
@@ -19,7 +30,7 @@ export const getUserProfile = async (githubUrl) => {
       createdAt: response.data.created_at,
     };
   } catch (error) {
-    console.log("Error fetching user profile : ", error);
+    console.error("Error fetching GitHub user profile:", error.response?.status, error.message);
     throw error;
   }
 };
@@ -39,7 +50,7 @@ export const getRepos = async (username) => {
       updatedAt: repo.updated_at,
     }));
   } catch (error) {
-    console.log("Error fetching repos : ", error);
+    console.error("Error fetching GitHub repositories:", error.response?.status, error.message);
     throw error;
   }
 };
