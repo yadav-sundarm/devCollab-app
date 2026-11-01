@@ -8,24 +8,50 @@ const UserProfile = () => {
     const { userId } = useParams()
     const loggedInUser = JSON.parse(localStorage.getItem('user'))
     const isOwnProfile = loggedInUser?._id === userId
-    const [userData, setUserData] = useState(null)
-    const [githubData, setGithubData] = useState(null)
-    const [loading, setLoading] = useState(true)
+    const [userResult, setUserResult] = useState(null)
+    const [githubResult, setGithubResult] = useState(null)
+    const userData = userResult?.userId === userId ? userResult.data : null
+    const githubData = githubResult?.userId === userId ? githubResult.data : null
+    const loading = !userResult || userResult.userId !== userId
+    const profileError = userResult?.userId === userId ? userResult.error : null
     const navigate = useNavigate()
 
     useEffect(() => {
-        const loadData = async () => {
+        let isCurrent = true
+
+        const loadUser = async () => {
             try {
-                const [user, github] = await Promise.all([fetchUserById(userId), fetchGithubData(userId)])
-                setUserData(user)
-                setGithubData(github)
+                const user = await fetchUserById(userId)
+                if (isCurrent) setUserResult({ userId, data: user, error: null })
             } catch (error) {
                 console.error('Error loading profile:', error)
-            } finally {
-                setLoading(false)
+                if (isCurrent) {
+                    setUserResult({
+                        userId,
+                        data: null,
+                        error: error.response?.status === 404
+                            ? 'User not found.'
+                            : 'Unable to load this profile. Please try again.',
+                    })
+                }
             }
         }
-        loadData()
+
+        const loadGithub = async () => {
+            try {
+                const github = await fetchGithubData(userId)
+                if (isCurrent) setGithubResult({ userId, data: github })
+            } catch (error) {
+                console.error('Error loading GitHub profile data:', error)
+            }
+        }
+
+        loadUser()
+        loadGithub()
+
+        return () => {
+            isCurrent = false
+        }
     }, [userId])
 
     if (loading) return (
@@ -42,7 +68,7 @@ const UserProfile = () => {
 
     if (!userData) return (
         <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
-            <p className="text-gray-500">User not found.</p>
+            <p className="text-gray-500">{profileError || 'User not found.'}</p>
         </div>
     )
 
