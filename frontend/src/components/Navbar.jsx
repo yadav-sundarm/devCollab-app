@@ -19,7 +19,7 @@ const Navbar = () => {
                     className="text-violet-600 font-bold text-xl cursor-pointer shrink-0 tracking-tight"
                     onClick={() => navigate('/')}
                 >
-                    Dev<span className="text-gray-900">Colab</span>
+                    Dev<span className="text-gray-900">Collab</span>
                 </span>
 
                 {/* Search */}
