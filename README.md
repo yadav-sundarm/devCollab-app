@@ -2,6 +2,8 @@
 
 A developer collaboration platform where developers can post projects, find collaborators, apply to join open projects, and communicate in real-time. Built with the MERN stack and Socket.io.
 
+For the full architecture, data model, user workflows, API routes, and local setup, see the [Project Guide](./PROJECT_GUIDE.md).
+
 ## Features
 
 - **Authentication** — JWT-based signup and login
@@ -74,10 +76,12 @@ npm install
 Create a `.env` file in the `backend/` folder:
 
 ```env
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
+PORT=8000
+MONGO=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
-GITHUB_API=your_github_personal_access_token
+CLIENT_URL=http://localhost:5173
+GITHUB_CLIENT_ID=your_github_oauth_client_id
+GITHUB_CLIENT_SECRET=your_github_oauth_client_secret
 ```
 
 Start the backend:
@@ -96,8 +100,11 @@ npm install
 Create a `.env` file in the `frontend/` folder:
 
 ```env
-VITE_API_URL=http://localhost:5000
+VITE_API_URL=http://localhost:8000
 ```
+
+Configure the GitHub OAuth app callback URL as
+`http://localhost:8000/api/auth/github/callback`.
 
 Start the frontend:
 
@@ -115,10 +122,12 @@ npm run dev
 
 | Variable | Location | Description |
 |---|---|---|
-| `PORT` | backend | Server port (default 5000) |
-| `MONGO_URI` | backend | MongoDB connection string |
+| `PORT` | backend | Server port (default 8000) |
+| `MONGO` | backend | MongoDB connection string |
 | `JWT_SECRET` | backend | Secret key for JWT signing |
-| `GITHUB_API` | backend | GitHub personal access token |
+| `CLIENT_URL` | backend | Frontend origin allowed by CORS and used for OAuth redirects |
+| `GITHUB_CLIENT_ID` | backend | GitHub OAuth app client ID |
+| `GITHUB_CLIENT_SECRET` | backend | GitHub OAuth app client secret |
 | `VITE_API_URL` | frontend | Backend base URL |
 
 ## API Routes
@@ -136,9 +145,9 @@ npm run dev
 | GET | `/api/projects/:id/applications` | Get applications for a project | Yes |
 | PATCH | `/api/projects/:id/applications/:appId` | Accept or reject an application | Yes |
 | GET | `/api/myApplications` | Get logged-in user's applications | Yes |
-| GET | `/api/messages/:projectId` | Get messages for a project | Yes |
-| GET | `/api/messages/user` | Get all conversations for a user | Yes |
-| GET | `/api/github/:userId` | Get GitHub data for a user | Yes |
+| GET | `/api/projects/:projectId/messages` | Get messages for a project | Yes |
+| GET | `/api/user/messages` | Get messages for the current user | Yes |
+| GET | `/api/github/:userId/userProfile` | Get GitHub data for a user | Yes |
 | GET | `/api/users/:userId` | Get user profile by ID | Yes |
 
 ## Live Demo
